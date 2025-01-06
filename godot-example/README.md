@@ -4,7 +4,7 @@ Godot implementation of an autotile algorithm for tilemaps with JSON configurati
 
 ## Why?
 
-Godot's terrain implementation works well for static maps that do not change during gameplay. However, it is [_extremely_](<(#benchmarks)>) slow for use cases like rendering chunks at runtime or generating large portions of the tilemap.
+Godot's terrain implementation works well for static maps that do not change during gameplay. However, it is [_extremely_](#benchmarks) slow for use cases like rendering chunks at runtime or generating large portions of the tilemap.
 
 This library is designed to solve this issue for projects that require runtime autotile generation.
 
