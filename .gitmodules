@@ -1,0 +1,3 @@
+[submodule "modules/autotile"]
+	path = modules/autotile
+	url = https://github.com/ruedoux/autotile.git

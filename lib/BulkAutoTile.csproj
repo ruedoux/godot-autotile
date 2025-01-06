@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\modules\autotile\lib\AutoTile.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>11.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <NoWarn>NU1605</NoWarn>
+    <IsAotCompatible>true</IsAotCompatible>
+    <PublishAOT>true</PublishAOT>
+  </PropertyGroup>
+
+  <!-- Ensure nothing is trimmed by compiler -->
+  <ItemGroup>
+    <TrimmerRootAssembly Include="AutoTile" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GodotSharp" Version="4.3.0" />
+  </ItemGroup>
+  
+</Project>

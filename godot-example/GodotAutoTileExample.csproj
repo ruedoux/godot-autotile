@@ -1,0 +1,16 @@
+<Project Sdk="Godot.NET.Sdk/4.3.0">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>11.0</LangVersion>
+    <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'android' ">net7.0</TargetFramework>
+    <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'ios' ">net8.0</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <RootNamespace>GodotAutoTileExample</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="BulkAutoTile">
+      <HintPath>addons/bulk-autotile/bin/BulkAutoTile.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

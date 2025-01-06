@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dph4vqbuewlxt"]
+
+[ext_resource type="Script" path="res://scenes/examples/SimpleExample.cs" id="1_ps63c"]
+
+[node name="SimpleExample" type="Node2D"]
+script = ExtResource("1_ps63c")
