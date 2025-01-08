@@ -1,14 +1,18 @@
 using BulkAutoTile;
 using Godot;
+using System;
 using System.Collections.Generic;
 
 namespace BulkAutoTileExample;
 
 public partial class SimpleExample : Node2D
 {
-  private readonly string autotileImagesDirectory = "./resources/autotile-set-images";
-  private readonly string autotileBitmaskName = "ExampleBitmaskName";
-  private readonly string autotileTileName = "ExampleAutoTiled";
+  const string IMAGES_DIRECTORY = "./resources/images";
+  const string AUTO_TILE_FILE = "ExampleAutoTiled.png";
+  const string AUTO_TILE_BITMASK = "ExampleBitmaskName";
+  const string AUTO_TILE_NAME = "ExampleAutoTiled";
+  const string TILE_SET_TEMPLATE_PATH = "resources/TileSetTemplate.tres";
+
 
   public override void _Ready()
   {
@@ -19,14 +23,14 @@ public partial class SimpleExample : Node2D
     // You could assign your own ids for each of the tile names if you wanted
     Dictionary<string, int> tileNamesToIds = bulkAutoTileConfig.GetRandomTileIdsToTileNames();
 
-    // In order to get the autotile drawer, it first needs to be made from configuration
+    // In order to get the autoTile drawer, it first needs to be made from configuration
     BulkAutoTileDrawerComposer bulkAutoTileDrawerComposer = new(
       bulkAutoTileConfig,
-      autotileImagesDirectory, // The root directory where all images for autotile reside
+      IMAGES_DIRECTORY, // The root directory where all images for autoTile reside
       tileNamesToIds
     );
 
-    // The drawer node is a godot abstraction layer on top of the autotile algorithm.
+    // The drawer node is a godot abstraction layer on top of the autoTile algorithm.
     // It can be treated exactly like a regular TileMap, just add it to a scene.
     // NOTE: QueueFree() it like a regular node to avoid memory leak.
     var bulkAutoTileDrawer = bulkAutoTileDrawerComposer.GetBulkAutoTileDrawer();
@@ -34,11 +38,11 @@ public partial class SimpleExample : Node2D
 
     // In order to optimize bulk placement of tiles you have to create a list of
     // positions paired with tile ids
-    List<KeyValuePair<Vector2I, int>> tilesToDraw = new()
-    {
-      new(new(0, 0), tileNamesToIds[autotileTileName]), // Place tile autotileTileName on position=(0,0)
-      new(new(1, 0), tileNamesToIds[autotileTileName])  // Place tile autotileTileName on position=(1,0)
-    };
+    Random random = new();
+    List<KeyValuePair<Vector2I, int>> tilesToDraw = new();
+    int tileId1 = tileNamesToIds[AUTO_TILE_NAME];
+    for (int i = 0; i < 128; i++)
+      tilesToDraw.Add(new(new(random.Next(0, 16), random.Next(0, 16)), tileId1));
 
     // This is straight forward, draw the tiles on layer 0
     bulkAutoTileDrawer.DrawTiles(0, tilesToDraw.ToArray());
@@ -52,29 +56,29 @@ public partial class SimpleExample : Node2D
     // to make the job easier. Simply create a terrain in TileSet and load it here.
     int terrain = 0;
     int terrainSet = 0;
-    var tileSetTemplate = ResourceLoader.Load<TileSet>("resources/TileSetTemplate.tres");
+    var tileSetTemplate = ResourceLoader.Load<TileSet>(TILE_SET_TEMPLATE_PATH);
 
     // Builder is used for crafting the config
-    AutoTileConfigBuilder autotileConfigBuilder = new();
-    autotileConfigBuilder.SetTileSize(16); // Aka 16x16 tile
+    AutoTileConfigBuilder autoTileConfigBuilder = new();
+    autoTileConfigBuilder.SetTileSize(16); // Aka 16x16 tile
 
     // Pull bitmask from TileSet and assign name to it
-    autotileConfigBuilder.AddBitmaskSetFromTileSet(
-      autotileBitmaskName,
+    autoTileConfigBuilder.AddBitmaskSetFromTileSet(
+      AUTO_TILE_BITMASK,
       tileSetTemplate,
       terrainSet,
       terrain);
 
     // Tile definition is basically creating a single tile from scratch
-    autotileConfigBuilder.AddTileDefinition(
-      autotileTileName, // The name of the tile (so it can be referenced later)
+    autoTileConfigBuilder.AddTileDefinition(
+      AUTO_TILE_NAME, // The name of the tile (so it can be referenced later)
       Layer: 0, // Layer, works exactly like in regulat TileMapLayer
-      ImageFileName: autotileTileName, // The name of the image, without the extension
-      BitmaskName: autotileBitmaskName, // The name of the previously defined bitmask
+      ImageFileName: AUTO_TILE_FILE, // The name of the image, without the extension
+      BitmaskName: AUTO_TILE_BITMASK, // The name of the previously defined bitmask
       PositionInSet: new(0, 0), // Where the set starts on the image (Its possible to put multiple sets in one image)
-      AutoTileGroup: -1 // Defines the tile group. Tile groups autotile with each other
+      AutoTileGroup: -1 // Defines the tile group. Tile groups autoTile with each other
       );
 
-    return autotileConfigBuilder.BuildBulkAutoTileConfig();
+    return autoTileConfigBuilder.BuildBulkAutoTileConfig();
   }
 }

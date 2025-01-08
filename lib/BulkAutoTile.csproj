@@ -13,11 +13,6 @@
     <PublishAOT>true</PublishAOT>
   </PropertyGroup>
 
-  <!-- Ensure nothing is trimmed by compiler -->
-  <ItemGroup>
-    <TrimmerRootAssembly Include="AutoTile" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="GodotSharp" Version="4.3.0" />
   </ItemGroup>

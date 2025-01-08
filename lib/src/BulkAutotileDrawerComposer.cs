@@ -51,6 +51,10 @@ public class BulkAutoTileDrawer : Node2D
     autoTileDrawer.UpdateTiles(tileLayer, positionsConverted);
   }
 
+  // Pull out the underlying TileMapLayers
+  public TileMapLayer[] GetTileMapLayers()
+    => godotTileMap.TileMapLayers;
+
   public new void QueueFree()
   {
     foreach (var tileMapLayer in godotTileMap.TileMapLayers)
@@ -76,25 +80,11 @@ public class BulkAutoTileDrawerComposer
       tileNameToIds);
   }
 
-  /// <summary>
-  /// Uses deferred call for TileMapLayer, async compatible.
-  /// </summary>
   public BulkAutoTileDrawer GetBulkAutoTileDrawer()
   {
     var tileSize = new Vector2Int(autoTileConfig.TileSize, autoTileConfig.TileSize);
     var godotTileMap = TileMapLoader.Load(autoTilerComposer.TileLoader, tileSize);
     TileMapDrawer tileMapDrawer = new(godotTileMap);
     return new(new(tileMapDrawer, autoTilerComposer.GetAutoTiler()), godotTileMap);
-  }
-
-  /// <summary>
-  /// Does not use deferred call for TileMapLayer, not async compatible.
-  /// </summary>
-  public BulkAutoTileDrawer GetBulkAutoTileDrawerNotDeferred()
-  {
-    var tileSize = new Vector2Int(autoTileConfig.TileSize, autoTileConfig.TileSize);
-    var godotTileMap = TileMapLoader.Load(autoTilerComposer.TileLoader, tileSize);
-    TileMapDrawerNotDeferred tileMapDrawerNotDeferred = new(godotTileMap);
-    return new(new(tileMapDrawerNotDeferred, autoTilerComposer.GetAutoTiler()), godotTileMap);
   }
 }

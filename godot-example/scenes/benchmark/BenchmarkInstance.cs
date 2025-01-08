@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using Godot;
 
@@ -47,5 +48,16 @@ partial class BenchmarkInstance : Node2D
         MedianTimeMs = (results[results.Count / 2 - 1] + results[results.Count / 2]) / 2;
       MedianTimeMs = results[results.Count / 2];
     }
+  }
+
+  public string GetResult(string info)
+  {
+    return $"""
+    [RUN RESULT] {info} | Repeat count: {Repeats}
+    -> Average time: {AverageTimeMs}ms
+    -> Median time: {MedianTimeMs}ms
+    -> Max time: {MaxTimeMs}ms
+    -> Min time: {MinTimeMs}ms
+    """;
   }
 }

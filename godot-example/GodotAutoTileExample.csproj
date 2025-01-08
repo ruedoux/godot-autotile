@@ -6,7 +6,18 @@
     <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'ios' ">net8.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>GodotAutoTileExample</RootNamespace>
+    <Nullable>enable</Nullable>
+    <NoWarn>NU1605</NoWarn>
+    <IsAotCompatible>true</IsAotCompatible>
+    <PublishAOT>true</PublishAOT>
   </PropertyGroup>
+
+  <!-- Ensure nothing is trimmed by compiler -->
+  <ItemGroup>
+    <TrimmerRootAssembly Include="$(TargetName)" />
+    <TrimmerRootAssembly Include="GodotSharp" />
+    <TrimmerRootAssembly Include="BulkAutoTile" />
+  </ItemGroup>
 
   <ItemGroup>
     <Reference Include="BulkAutoTile">
