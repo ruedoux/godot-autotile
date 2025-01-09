@@ -10,38 +10,26 @@ This library is designed to solve this issue for projects that require runtime a
 
 ## Features
 
-- **Bulk AutoTiling**
 - **Ready-to-use Godot implementation**
-- **Much faster than Godot's terrain implementation**
+- **Bulk AutoTiling**
 - **Fully async compatible**
+- **Multiple tile types can autotile with each other**
+- **Much faster than Godot's terrain implementation** (see (#benchmarks))
 - **Tile configuration** (includes bitmasks and connections)
 
 ## Benchmarks
 
-Speed comparison between Godot's built-in terrain feature was performed using a simple benchmark (source code in the godot-example project).
+Speed comparison between Godot's built-in terrain feature and this autotile implementation was performed using a simple benchmark (source code in the godot-example project directory).
 
-Results for a 256x256 autotiled chunk (over 25 repeats):
+[Result for 128x128 chunk](https://github.com/ruedoux/godot-autotile/tree/main/godot-example/benchmark-result-128.txt)
 
-- **Godot:**
-
-  - Average time: 3355ms
-  - Median time: 3389ms
-  - Max time: 3444ms
-  - Min time: 3254ms
-
-- **BulkAutoTile:**
-  - Average time: 98ms
-  - Median time: 79ms
-  - Max time: 181ms
-  - Min time: 68ms
-
-_NOTE:_ The above results were collected using a non-callable/async implementation of the algorithm. If used with async, it would be even faster!
+[Result for 256x256 chunk](https://github.com/ruedoux/godot-autotile/tree/main/godot-example/benchmark-result-256.txt)
 
 ## Installation
 
-As the project is fairly bare-bones, it opts for hand compilation of DLLs and moving the `godot-example/addons/bulk-autotile` folder into your project.
+# Manual
 
-Compile and copy the DLLs:
+Compile and copy the DLLs to `godot-example/addons/bulk-autotile/bin`:
 
 ```bash
 # For Linux
@@ -53,7 +41,7 @@ Compile and copy the DLLs:
 
 After doing that you can copy the `godot-example/addons/bulk-autotile` folder from this repo into your project.
 
-Add .csproj reference so the Godot project sees the .dll's:
+Add .csproj reference so Godot project sees the .dll's:
 
 ```xml
 <ItemGroup>
