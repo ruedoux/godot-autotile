@@ -14,7 +14,7 @@ This library is designed to solve this issue for projects that require runtime a
 - **Bulk AutoTiling**
 - **Fully async compatible**
 - **Multiple tile types can autotile with each other**
-- **Much faster than Godot's terrain implementation** (see (#benchmarks))
+- **Much faster than Godot's terrain implementation** (see [benchmarks](#benchmarks))
 - **Tile configuration** (includes bitmasks and connections)
 
 ## Benchmarks
