@@ -1,0 +1,9 @@
+{
+  "OutputPath": "benchmark-result-256.txt",
+  "ImagesDirectory": "resources/images",
+  "AutoTileConfigPath": "resources/AutoTileConfig.json",
+  "ChunkX": 256,
+  "ChunkY": 256,
+  "RepeatCount": 20,
+  "BatchSize": 2048
+}

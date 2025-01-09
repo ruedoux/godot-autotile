@@ -2,4 +2,3 @@
 .godot/
 /android/
 addons/bulk-autotile/bin
-*.txt

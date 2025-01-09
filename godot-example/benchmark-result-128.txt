@@ -1,0 +1,18 @@
+Platform: Linux, version: Unix 6.12.8.1, CPU: AMD Ryzen 7 7800X3D 8-Core Processor, GPU: AMD Radeon RX 7900 XT (RADV NAVI31)
+Chunk size: (128, 128), repeat count: 20, batch size for async: 512
+
+[RUN RESULT] <RunGodotBenchmarkSync>b__0
+-> Average time: 794ms
+-> Median time: 790ms
+-> Max time: 839ms
+-> Min time: 765ms
+[RUN RESULT] <RunCustomBenchmarkSync>b__0
+-> Average time: 27ms
+-> Median time: 34ms
+-> Max time: 54ms
+-> Min time: 10ms
+[RUN RESULT] <RunCustomBenchmarkAsync>b__0
+-> Average time: 7ms
+-> Median time: 2ms
+-> Max time: 27ms
+-> Min time: 1ms

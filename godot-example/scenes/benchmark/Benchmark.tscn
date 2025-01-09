@@ -7,16 +7,15 @@ script = ExtResource("1_6lcvi")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer"]
+[node name="V" type="VBoxContainer" parent="CanvasLayer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -0.5
-offset_right = 0.5
 grow_horizontal = 2
 grow_vertical = 2
-size_flags_horizontal = 3
+
+[node name="RichTextLabel" type="Button" parent="CanvasLayer/V"]
+layout_mode = 2
 size_flags_vertical = 3
-theme_override_font_sizes/normal_font_size = 85
-bbcode_enabled = true
-text = "RESULTS SAVED TO FILES"
+theme_override_font_sizes/font_size = 60
+text = "Press to start benchmark"

@@ -50,7 +50,7 @@ public partial class SimpleExample : Node2D
 
   // This only should be used for testing, rather than doing this in code prepare
   // a proper json configuration like in ExampleLoad.cs
-  private BulkAutoTileConfig GetBulkAutoTileConfig()
+  private static BulkAutoTileConfig GetBulkAutoTileConfig()
   {
     // For this config instead of handcrafting the bitmask we can use godot abstraction
     // to make the job easier. Simply create a terrain in TileSet and load it here.

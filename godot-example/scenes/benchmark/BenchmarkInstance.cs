@@ -1,13 +1,29 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Godot;
 
 namespace BulkAutoTileExample;
 
-partial class BenchmarkInstance : Node2D
+
+[JsonSourceGenerationOptions(
+  DefaultIgnoreCondition = JsonIgnoreCondition.Never,
+  IncludeFields = true)]
+[JsonSerializable(typeof(BenchmarkConfig))]
+public partial class BenchmarkConfigJsonContext : JsonSerializerContext { }
+
+public record BenchmarkConfig(
+  string OutputPath,
+  string ImagesDirectory,
+  string AutoTileConfigPath,
+  int ChunkX,
+  int ChunkY,
+  int BatchSize,
+  int RepeatCount);
+
+public partial class BenchmarkInstance : Node2D
 {
   public long AverageTimeMs { private set; get; }
   public long MedianTimeMs { private set; get; }
@@ -50,10 +66,10 @@ partial class BenchmarkInstance : Node2D
     }
   }
 
-  public string GetResult(string info)
+  public string GetResult()
   {
     return $"""
-    [RUN RESULT] {info} | Repeat count: {Repeats}
+    [RUN RESULT] {benchmarkFunction.Method.Name}
     -> Average time: {AverageTimeMs}ms
     -> Median time: {MedianTimeMs}ms
     -> Max time: {MaxTimeMs}ms

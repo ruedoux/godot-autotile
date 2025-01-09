@@ -3,53 +3,60 @@ using BulkAutoTile;
 using System.Collections.Generic;
 using System.IO;
 using System;
-using System.Linq;
-using System.Diagnostics.Metrics;
-using System.Threading.Tasks.Dataflow;
+using System.Text.Json;
 
 namespace BulkAutoTileExample;
 
+// NOTE: This is a very simplistic benchmark, should be ran in release since 
+//       debug will affect the results
 public partial class Benchmark : Node
 {
   const string TILE_SET_TEMPLATE_PATH = "res://resources/TileSetTemplate.tres";
 
-  const string IMAGES_DIRECTORY = "resources/images";
-  const string AUTO_TILE_CONFIG_PATH = "resources/AutoTileConfig.json";
-  const string RESULT_FILE = "benchmark-result.txt";
+  bool benchmarkRunning = false;
+  Button StartBenchmarkButton = null!;
 
-  // NOTE: This is a very simplistic benchmark, should be ran in release since 
-  //       debug will affect the results
   public override void _Ready()
   {
-    string result = "";
-    Vector2I chunkSize64 = new(64, 64);
-    Vector2I chunkSize128 = new(128, 128);
-    Vector2I chunkSize256 = new(256, 256);
-    Vector2I chunkSize512 = new(512, 512);
+    StartBenchmarkButton = GetNode<Button>("CanvasLayer/V/RichTextLabel");
+    StartBenchmarkButton.Connect(Button.SignalName.Pressed, new Callable(this, nameof(StartBenchmark)));
+  }
 
+  private void StartBenchmark()
+  {
+    if (benchmarkRunning)
+      return;
+
+    benchmarkRunning = true;
+    string result = "";
     string osName = OS.GetName();
     string osVersion = System.Environment.OSVersion.VersionString;
     string cpuInfo = OS.GetProcessorName();
     string gpuInfo = RenderingServer.GetRenderingDevice().GetDeviceName();
 
-    result += $"Platform: {osName}, version: {osVersion}, CPU: {cpuInfo}, GPU: {gpuInfo}" + System.Environment.NewLine;
-    result += "# ONE THREAD" + System.Environment.NewLine;
-    result += RunGodotBenchmarkSync(10, chunkSize64) + System.Environment.NewLine;
-    result += RunGodotBenchmarkSync(10, chunkSize128) + System.Environment.NewLine;
+    string jsonString = File.ReadAllText("resources/BenchmarkConfig.json");
+    var benchmarkConfig = JsonSerializer.Deserialize(
+      jsonString, BenchmarkConfigJsonContext.Default.BenchmarkConfig)
+      ?? throw new JsonException(nameof(jsonString));
 
-    result += RunCustomBenchmarkSync(10, chunkSize64) + System.Environment.NewLine;
-    result += RunCustomBenchmarkSync(10, chunkSize128) + System.Environment.NewLine;
+    Vector2I chunkSize = new(benchmarkConfig.ChunkX, benchmarkConfig.ChunkY);
+    int RepeatCount = benchmarkConfig.RepeatCount;
+    int batchSize = benchmarkConfig.BatchSize;
+    string autoTileConfigPath = benchmarkConfig.AutoTileConfigPath;
+    string imagesDirectory = benchmarkConfig.ImagesDirectory;
 
-    result += "# ASYNC" + System.Environment.NewLine;
-    result += RunCustomBenchmarkAsync(10, chunkSize128, 32) + System.Environment.NewLine;
-    result += RunCustomBenchmarkAsync(10, chunkSize256, 32) + System.Environment.NewLine;
-    result += RunCustomBenchmarkAsync(10, chunkSize512, 32) + System.Environment.NewLine;
+    result += $"""
+    Platform: {osName}, version: {osVersion}, CPU: {cpuInfo}, GPU: {gpuInfo}
+    Chunk size: {chunkSize}, repeat count: {RepeatCount}, batch size for async: {batchSize}
+    
+    {RunGodotBenchmarkSync(RepeatCount, chunkSize)}
+    {RunCustomBenchmarkSync(RepeatCount, chunkSize, autoTileConfigPath, imagesDirectory)}
+    {RunCustomBenchmarkAsync(RepeatCount, chunkSize, batchSize, autoTileConfigPath, imagesDirectory)}
+    """;
 
-    result += RunCustomBenchmarkAsync(10, chunkSize128, 64) + System.Environment.NewLine;
-    result += RunCustomBenchmarkAsync(10, chunkSize256, 64) + System.Environment.NewLine;
-    result += RunCustomBenchmarkAsync(10, chunkSize512, 64) + System.Environment.NewLine;
-
-    File.WriteAllText(RESULT_FILE, result);
+    File.WriteAllText(benchmarkConfig.OutputPath, result);
+    GD.Print(result);
+    benchmarkRunning = false;
   }
 
   private string RunGodotBenchmarkSync(int repeats, Vector2I chunkSize)
@@ -76,16 +83,17 @@ public partial class Benchmark : Node
     RemoveChild(tileMapLayer);
     tileMapLayer.QueueFree();
 
-    return benchmarkInstance.GetResult($"Godot for chunk size {chunkSize.X}x{chunkSize.Y}");
+    return benchmarkInstance.GetResult();
   }
 
-  private string RunCustomBenchmarkSync(int repeats, Vector2I chunkSize)
+  private string RunCustomBenchmarkSync(
+    int repeats, Vector2I chunkSize, string AutoTileConfigPath, string imagesDirectory)
   {
-    var bulkAutoTileConfig = BulkAutoTileConfig.LoadFromFile(AUTO_TILE_CONFIG_PATH);
+    var bulkAutoTileConfig = BulkAutoTileConfig.LoadFromFile(AutoTileConfigPath);
 
     BulkAutoTileDrawerComposer bulkAutoTileDrawerComposer = new(
       bulkAutoTileConfig,
-      IMAGES_DIRECTORY,
+      imagesDirectory,
       bulkAutoTileConfig.GetRandomTileIdsToTileNames()
     );
 
@@ -107,16 +115,17 @@ public partial class Benchmark : Node
     RemoveChild(bulkAutoTileDrawer);
     bulkAutoTileDrawer.QueueFree();
 
-    return benchmarkInstance.GetResult($"Custom for chunk size {chunkSize.X}x{chunkSize.Y}");
+    return benchmarkInstance.GetResult();
   }
 
-  private string RunCustomBenchmarkAsync(int repeats, Vector2I chunkSize, int bachSize)
+  private string RunCustomBenchmarkAsync(
+    int repeats, Vector2I chunkSize, int bachSize, string AutoTileConfigPath, string imagesDirectory)
   {
-    var bulkAutoTileConfig = BulkAutoTileConfig.LoadFromFile(AUTO_TILE_CONFIG_PATH);
+    var bulkAutoTileConfig = BulkAutoTileConfig.LoadFromFile(AutoTileConfigPath);
 
     BulkAutoTileDrawerComposer bulkAutoTileDrawerComposer = new(
       bulkAutoTileConfig,
-      IMAGES_DIRECTORY,
+      imagesDirectory,
       bulkAutoTileConfig.GetRandomTileIdsToTileNames()
     );
 
@@ -143,7 +152,7 @@ public partial class Benchmark : Node
     RemoveChild(bulkAutoTileDrawer);
     bulkAutoTileDrawer.QueueFree();
 
-    return benchmarkInstance.GetResult($"Custom for chunk size {chunkSize.X}x{chunkSize.Y} and batch size {bachSize}");
+    return benchmarkInstance.GetResult();
   }
 
 
