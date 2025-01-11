@@ -27,15 +27,17 @@ Speed comparison between Godot's built-in terrain feature and this autotile impl
 
 ## Installation
 
-# Manual
-
-Compile and copy the DLLs to `godot-example/addons/bulk-autotile/bin`:
+### Manual reference to .dll
 
 ```bash
-# For Linux
+# Clone repo
+git clone https://github.com/ruedoux/godot-autotile
+cd godot-autotile
+
+# Compile for Linux
 ./compile.sh
 
-# For Windows
+# Compile for Windows
 ./compile.bat
 ```
 
@@ -49,4 +51,18 @@ Add .csproj reference so Godot project sees the .dll's:
     <HintPath>addons/bulk-autotile/bin/BulkAutoTile.dll</HintPath>
   </Reference>
 </ItemGroup>
+```
+
+### Manual reference to .csproj for git project
+
+Add the submodule outside of your .csproj file directory, example:
+
+```bash
+# Add submodule to your project
+git submodule add https://github.com/ruedoux/godot-autotile
+git submodule update --init --recursive
+
+# Go to your main project path and reference the submodule
+cd /your/project/path
+dotnet add reference ../path/to/godot-autotile/lib/BulkAutoTile.csproj
 ```
