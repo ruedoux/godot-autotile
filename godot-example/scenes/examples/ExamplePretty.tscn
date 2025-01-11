@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://biyjm22ttjcte"]
+
+[ext_resource type="Script" path="res://scenes/examples/ExamplePretty.cs" id="1_ifg4k"]
+
+[node name="ExamplePretty" type="Node2D"]
+script = ExtResource("1_ifg4k")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+zoom = Vector2(4, 4)
